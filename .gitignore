@@ -1,0 +1,69 @@
+# --------------------------
+#  Node / Vite 基础
+# --------------------------
+node_modules/
+dist/
+build/
+.vite/
+.cache/
+.temp/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Vite 生成的环境文件
+*.local
+.env               # 如需版本管控示例，可改为 .env.example
+.env.*.local
+.env.*             # .env.development, .env.production, etc.
+
+# --------------------------
+#  IDE / 编辑器
+# --------------------------
+# VS Code
+.vscode/
+*.code-workspace
+
+# WebStorm / IntelliJ
+.idea/
+*.iml
+
+# --------------------------
+#  OS 缓存
+# --------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# --------------------------
+#  测试 / 覆盖率
+# --------------------------
+coverage/
+*.lcov
+
+# --------------------------
+#  Storybook
+# --------------------------
+storybook-static/
+.cache/storybook/
+
+# --------------------------
+#  其他常见工具
+# --------------------------
+# eslint / prettier
+.eslintcache
+.prettier.cache
+
+# parcel / rollup / snowpack 等可能生成的缓存
+.parcel-cache/
+.rollup.cache/
+.snowpack/
+
+# --------------------------
+#  图片优化、压缩临时文件
+# --------------------------
+*.orig
+*~
