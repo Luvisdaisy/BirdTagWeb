@@ -4,80 +4,69 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import TagCountSidebar from '../components/TagCountSidebar';
 import CountChip from '../components/CountChip';
-import MixedGrid from '../components/MixedGrid';
+import MediaCard from '../components/MediaCard';
 import ErrorModal from '../components/ErrorModal';
 import {useToast} from '../contexts/ToastContext';
-import {Link} from "react-router-dom";
-import {ArrowLeftIcon} from "@heroicons/react/24/solid";
+import {Link} from 'react-router-dom';
+import {ArrowLeftIcon} from '@heroicons/react/24/solid';
+import {updateTagsApi, deleteApi} from '../api/media';
 
-const MOCK = true;
+const API_BASE = import.meta.env.VITE_API_BASE
 
-/* ===== Mock 数据 ===== */
-const mockTags = [
-    'crow', 'pigeon', 'eagle', 'sparrow', 'owl', 'parrot', 'seagull',
-    'falcon', 'albatross', 'woodpecker', 'robin', 'swallow', 'crane'
-];
-const mockResult = (payload) =>
-    Object.entries(payload).map(([tag, n]) => ({
-        id: `${tag}-${n}`,
-        type: 'image',
-        thumb: `https://placehold.co/200x140?text=${tag}+${n}`,
-        original: `https://placehold.co/800x560?text=${tag}+${n}`,
-    }));
-/* ===================== */
-
-const SearchTagsCount = () => {
+export default function SearchTagsCount() {
     const [allTags, setAllTags] = useState([]);
-    const [selected, setSelected] = useState({});   // { tag: count }
+    const [selected, setSelected] = useState({}); // {tag: count}
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState([]);
     const [error, setError] = useState('');
     const {showToast} = useToast();
 
-    /* 拉取所有标签 */
+    /* 获取全部标签 */
     useEffect(() => {
-        if (MOCK) setAllTags(mockTags);
-        else axios.get('/api/all-tags').then(r => setAllTags(r.data))
+        axios
+            .get(`${API_BASE}/list-tags`)
+            .then((r) => setAllTags(r.data.tags || []))
             .catch(() => setError('获取标签失败'));
     }, []);
 
-    /* 选/取消标签 */
-    const toggle = (tag) =>
-        setSelected((p) => (tag in p ? p : {...p, [tag]: 1}));
-
-    /* 改数量/删除 */
+    /* 选/改标签 */
+    const toggle = (tag) => setSelected((p) => (tag in p ? p : {...p, [tag]: 1}));
     const inc = (t) => setSelected((p) => ({...p, [t]: p[t] + 1}));
     const dec = (t) => setSelected((p) => ({...p, [t]: Math.max(1, p[t] - 1)}));
     const remove = (t) => setSelected(({[t]: _, ...rest}) => rest);
 
-    /* 查询函数 */
-    const query = async (payload) => {
-        if (!Object.keys(payload).length) {
-            setResult([]);
-            return;
-        }
+    /* 查询 */
+    const queryByTags = async (payload) => {
+        if (!Object.keys(payload).length) return setResult([]);
+
         setLoading(true);
         try {
             let data;
-            if (MOCK) {
-                await new Promise(r => setTimeout(r, 400));
-                data = mockResult(payload);
-            } else {
-                const res = await axios.post('/api/search-tags-count', payload);
-                data = res.data.links;
-            }
+
+            // 拼 queryString: tag1=aa&count1=2&tag2=bb&count2=1
+            const qs = Object.entries(payload)
+                .map(([t, c], i) => `tag${i + 1}=${encodeURIComponent(t)}&count${i + 1}=${c}`)
+                .join('&');
+            const res = await axios.get(`${API_BASE}/query-by-tags?${qs}`);
+            data = (res.data.links || []).map((url, idx) => ({
+                id: `${idx}`,
+                type: url.match(/\.mp4$|\.mov$/) ? 'video' : url.match(/\.mp3$|\.wav$/) ? 'audio' : 'image',
+                thumbnail_url: url,
+                file_url: url.replace('-thumb', ''),
+                tags: Object.keys(payload),
+            }));
             setResult(data);
             showToast(`返回 ${data.length} 条文件`, 'success');
-        } catch (err) {
-            setError(err.message || '查询失败');
+        } catch (e) {
+            setError(e.message || '查询失败');
         } finally {
             setLoading(false);
         }
     };
 
-    /* selected 改动自动查询 */
+    /* 监听 selected */
     useEffect(() => {
-        query(selected);
+        queryByTags(selected);
     }, [selected]);
 
     return (
@@ -86,46 +75,50 @@ const SearchTagsCount = () => {
 
             <main className = "flex-1 bg-gray-50">
                 <div className = "flex w-full">
-                    <TagCountSidebar
-                        allTags = {allTags}
-                        selected = {selected}
-                        toggle = {toggle}
-                    />
+                    <TagCountSidebar allTags = {allTags} selected = {selected} toggle = {toggle}/>
 
-                    {/* 右侧 */}
                     <section className = "basis-2/3 flex-1 p-8">
-                        {/* 返回主页 */}
                         <Link
                             to = "/"
-                            className = "inline-flex items-center gap-1 w-fit mb-2
-                            rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700
-                            shadow hover:bg-blue-100 active:bg-blue-200
-                            transition focus:outline-none focus:ring-2 focus:ring-blue-300"
+                            className = "inline-flex items-center gap-1 mb-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 shadow hover:bg-blue-100 transition"
                         >
-                            <ArrowLeftIcon className = "h-5 w-5"/>
-                            返回主页
+                            <ArrowLeftIcon className = "h-5 w-5"/> 返回主页
                         </Link>
-                        <h1 className = "text-2xl font-bold text-gray-800 mb-4">
-                            按标签 + 数量 检索
-                        </h1>
 
-                        {/* Chip 列表 */}
+                        <h1 className = "text-2xl font-bold mb-4">按标签 + 数量 检索</h1>
+
+                        {/* 选中 Chip */}
                         <div className = "flex flex-wrap gap-2">
-                            {Object.entries(selected).map(([tag, count]) => (
+                            {Object.entries(selected).map(([tag, cnt]) => (
                                 <CountChip
-                                    key = {tag} tag = {tag} count = {count}
-                                    inc = {() => inc(tag)} dec = {() => dec(tag)}
+                                    key = {tag}
+                                    tag = {tag}
+                                    count = {cnt}
+                                    inc = {() => inc(tag)}
+                                    dec = {() => dec(tag)}
                                     remove = {() => remove(tag)}
                                 />
                             ))}
                         </div>
 
-                        {/* 结果 / 提示 */}
+                        {/* 结果 */}
                         {loading && <p className = "mt-6 text-gray-500">查询中...</p>}
-                        {!loading && result.length === 0 && (
-                            <p className = "mt-6 text-gray-500">请选择标签并设定数量</p>
+                        {!loading && result.length === 0 &&
+                            <p className = "mt-6 text-gray-500">请选择标签并设定数量</p>}
+                        {result.length > 0 && (
+                            <div className = "grid gap-4 sm:grid-cols-2 md:grid-cols-3 mt-6">
+                                {result.map((m) => (
+                                    <MediaCard
+                                        key = {m.id}
+                                        media = {m}
+                                        onUpdateTags = {(tags) => updateTagsApi(m.id, tags)}
+                                        onDelete = {() =>
+                                            deleteApi(m.id).then(() => setResult((r) => r.filter((x) => x.id !== m.id)))
+                                        }
+                                    />
+                                ))}
+                            </div>
                         )}
-                        {result.length > 0 && <MixedGrid list = {result}/>}
                     </section>
                 </div>
             </main>
@@ -134,6 +127,4 @@ const SearchTagsCount = () => {
             <ErrorModal message = {error} onClose = {() => setError('')}/>
         </div>
     );
-};
-
-export default SearchTagsCount;
+}

@@ -69,11 +69,17 @@ const FileUploader = () => {
 
         try {
             for (const {file, id} of files) {
-                const {data} = await axios.get('https://0bltz7gw14.execute-api.us-east-1.amazonaws.com/Test', {
-                    params: {filename: file.name, type: file.type},
+                const {data} = await axios.get('https://0bltz7gw14.execute-api.us-east-1.amazonaws.com/prod/api/getPresignedUrl', {
+                    // params: {filename: file.name, type: file.type},
+                    params: {
+                        filename: file.name,
+                        type: file.type.startsWith('image') ? 'image'
+                            : file.type.startsWith('audio') ? 'audio'
+                                : 'video'
+                    },
                 });
 
-                await axios.put(data.url, file, {
+                await axios.put(data.upload_url, file, {
                     headers: {'Content-Type': file.type},
                     onUploadProgress: (e) =>
                         setProg((p) => ({

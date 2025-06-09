@@ -16,7 +16,6 @@ const CountChip = ({tag, count, inc, dec, remove}) => (
     <button onClick = {remove} className = "hover:text-red-600">
       <XMarkIcon className = "h-4 w-4"/>
     </button>
-  </span>
-);
+  </span>);
 
 export default CountChip;
