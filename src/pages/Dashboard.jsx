@@ -31,7 +31,7 @@ const Dashboard = () => {
                 <Card
                     to = "/search-tags-count"
                     icon = {MagnifyingGlassIcon}
-                    title = "Search by tag"
+                    title = "Search by tag & amount"
                     desc = "Search pictures and videos based on labels and occurrences"
                 />
                 <Card

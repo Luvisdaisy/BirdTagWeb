@@ -66,7 +66,7 @@ export default function SearchTags() {
                     </Link>
 
                     <h1 className = "text-2xl font-bold text-center mb-6">
-                        Search by bird tag
+                        Search by bird type
                     </h1>
 
                     <TagPickerInline

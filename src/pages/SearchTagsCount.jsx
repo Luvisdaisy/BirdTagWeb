@@ -84,7 +84,7 @@ export default function SearchTagsCount() {
 
                     {/* 页面标题（居中） */}
                     <h1 className = "text-2xl font-bold text-center mb-6">
-                        Search by tag • Quantity
+                        Search by tag • amount
                     </h1>
 
                     {/* 标签选择器 */}
