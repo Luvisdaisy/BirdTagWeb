@@ -3,68 +3,55 @@ import axios from 'axios';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import TagSidebar from '../components/TagSidebar';
-import MediaCard from '../components/MediaCard';
 import ErrorModal from '../components/ErrorModal';
 import {useToast} from '../contexts/ToastContext';
 import {Link} from 'react-router-dom';
 import {ArrowLeftIcon} from '@heroicons/react/24/solid';
-import {deleteApi, updateTagsApi} from "../api/media";
+import OriginalFetcher from "../components/ImageManagementTool";
 
-const MOCK = true;
+const API_BASE =
+    import.meta.env.VITE_API_BASE ||
+    'https://0bltz7gw14.execute-api.us-east-1.amazonaws.com/prod/api';
 
-/* Mock */
-const mockTags = [
-    'crow', 'pigeon', 'eagle', 'sparrow', 'owl', 'parrot', 'seagull',
-    'falcon', 'albatross', 'woodpecker', 'robin', 'swallow', 'crane'
-];
-const mockResult = (selected) =>
-    selected.map((tg, i) => ({
-        id: `${tg}-${i}`,
-        type: 'image',
-        thumbnail_url: `https://placehold.co/200x140?text=${tg}`,
-        file_url: `https://placehold.co/800x560?text=${tg}`,
-        tags: [tg]
-    }));
-
-const SearchTags = () => {
+export default function SearchTags() {
     const [allTags, setAllTags] = useState([]);
-    const [selected, setSelected] = useState([]);
+    const [current, setCurrent] = useState(''); // 单选种类
     const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState([]);
+    const [links, setLinks] = useState([]);
     const [error, setError] = useState('');
     const {showToast} = useToast();
 
+    /* 拉取所有标签 */
     useEffect(() => {
-        if (MOCK) setAllTags(mockTags);
-        else axios.get('/api/all-tags').then(r => setAllTags(r.data))
+
+        axios
+            .get(`${API_BASE}/list-tags`)
+            .then((r) => setAllTags(r.data.tags || []))
             .catch(() => setError('获取标签失败'));
     }, []);
 
-    const toggleTag = (tag) => {
-        const newSel = selected.includes(tag)
-            ? selected.filter(t => t !== tag)
-            : [...selected, tag];
-        setSelected(newSel);
-        fetchResult(newSel);
+    /* 选择一个种类 */
+    const chooseTag = (tag) => {
+        const next = tag === current ? '' : tag; // 再次点击取消选择
+        setCurrent(next);
+        query(next);
     };
 
-    const fetchResult = async (tagsArr) => {
-        if (!tagsArr.length) {
-            setResult([]);
-            return;
-        }
+    /* 查询单个标签 */
+    const query = async (tag) => {
+        if (!tag) return setLinks([]);
+
         setLoading(true);
         try {
             let data;
-            if (MOCK) {
-                await new Promise(r => setTimeout(r, 400));
-                data = mockResult(tagsArr);
-            } else {
-                const res = await axios.post('/api/search-tags', {tags: tagsArr});
-                data = res.data;
-            }
-            setResult(data);
-            showToast(`获取 ${data.length} 条文件`, 'success');
+
+            // {"crow"} 按说明使用 POST body
+            const res = await axios.get(`${API_BASE}/query-by-tags`, {
+                tags: [tag],
+            });
+            data = [...new Set(res.data.links)];
+            setLinks(data);
+            showToast(`返回 ${data.length} 条文件`, 'success');
         } catch (e) {
             setError(e.message || '查询失败');
         } finally {
@@ -77,33 +64,56 @@ const SearchTags = () => {
             <Header/>
             <main className = "flex-1 bg-gray-50">
                 <div className = "flex w-full">
-                    <TagSidebar tags = {allTags} selected = {selected} toggle = {toggleTag}/>
-                    <section className = "basis-3/4 flex-1 p-8">
-                        <Link to = "/" className = "inline-flex items-center gap-1 w-fit mb-2
-                rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700
-                shadow hover:bg-blue-100 active:bg-blue-200 transition">
-                            <ArrowLeftIcon className = "h-5 w-5"/> 返回主页
-                        </Link>
-                        <h1 className = "text-2xl font-bold mb-4">选中标签：{selected.length}</h1>
+                    <TagSidebar tags = {allTags} selected = {[current]} toggle = {chooseTag}/>
 
-                        {loading && <p className = "text-gray-500">查询中...</p>}
-                        {!loading && result.length === 0 &&
-                            <p className = "text-gray-500">暂无结果，请选择标签</p>}
-                        {result.length > 0 &&
-                            <div className = "grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                                {result.map(m => (
-                                    <MediaCard key = {m.id} media = {m}
-                                               onUpdateTags = {(tags) => updateTagsApi(m.id, tags)}
-                                               onDelete = {() => deleteApi(m.id)}/>
+                    <section className = "basis-3/4 flex-1 p-8">
+                        {/* 返回主页 */}
+                        <Link
+                            to = "/"
+                            className = "inline-flex items-center gap-1 mb-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 shadow hover:bg-blue-100 transition"
+                        >
+                            <ArrowLeftIcon className = "h-5 w-5"/>
+                            返回主页
+                        </Link>
+
+                        <h1 className = "text-2xl font-bold mb-4">选择一个鸟类种类</h1>
+
+                        {current && (
+                            <p className = "text-sm text-gray-600 mb-4">
+                                当前选择：<span className = "font-semibold">{current}</span>
+                            </p>
+                        )}
+
+                        {/* 结果列表 */}
+                        {loading && <p className = "mt-6 text-gray-500">查询中...</p>}
+                        {!loading && !current && (
+                            <p className = "mt-6 text-gray-500">请在左侧选择一种鸟类</p>
+                        )}
+                        {!loading && current && links.length === 0 && (
+                            <p className = "mt-6 text-gray-500">未找到匹配文件</p>
+                        )}
+                        {links.length > 0 && (
+                            <ul className = "list-disc list-inside mt-6 space-y-2 text-blue-700">
+                                {links.map((url) => (
+                                    <li key = {url}>
+                                        <a
+                                            href = {url}
+                                            target = "_blank"
+                                            rel = "noopener noreferrer"
+                                            className = "hover:underline break-all"
+                                        >
+                                            {url}
+                                        </a>
+                                    </li>
                                 ))}
-                            </div>}
+                            </ul>
+                        )}
                     </section>
                 </div>
             </main>
             <Footer/>
             <ErrorModal message = {error} onClose = {() => setError('')}/>
+            <OriginalFetcher/>
         </div>
     );
-};
-
-export default SearchTags;
+}
