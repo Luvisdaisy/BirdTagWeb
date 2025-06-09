@@ -9,9 +9,7 @@ import {Link} from 'react-router-dom';
 import {ArrowLeftIcon} from '@heroicons/react/24/solid';
 import OriginalFetcher from "../components/ImageManagementTool";
 
-const API_BASE =
-    import.meta.env.VITE_API_BASE ||
-    'https://0bltz7gw14.execute-api.us-east-1.amazonaws.com/prod/api';
+const API_BASE = import.meta.env.VITE_API_BASE
 
 export default function SearchByFile() {
     const [tags, setTags] = useState([]);   // 检测出的标签
@@ -35,9 +33,9 @@ export default function SearchByFile() {
 
             setTags(Object.keys(res.data.detected_tags || {}));
             setLinks(res.data.links || []);
-            showToast('查询成功', 'success');
+            showToast('Query successful', 'success');
         } catch (e) {
-            setError(e.message || '查询失败');
+            setError(e.message || 'Query failed');
         } finally {
             setLoading(false);
         }
@@ -47,18 +45,18 @@ export default function SearchByFile() {
         <div className = "flex flex-col min-h-screen">
             <Header/>
             <main className = "flex-1 bg-gray-50 py-12">
-                <div className = "max-w-xl mx-auto px-4">
+                <div className = "max-w-2xl mx-auto px-4 ">
                     {/* 返回按钮 */}
                     <Link
                         to = "/"
                         className = "inline-flex items-center gap-1 w-fit mb-4 rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 shadow hover:bg-blue-100 transition"
                     >
                         <ArrowLeftIcon className = "h-5 w-5"/>
-                        返回主页
+                        Back
                     </Link>
 
                     <h1 className = "text-2xl font-bold text-center mb-6">
-                        上传文件 • 以图/声搜同标签
+                        Upload files • Search the same tags with pictures/sounds
                     </h1>
 
                     {/* 上传：单文件 ≤20 MB，可拖拽 */}
@@ -67,15 +65,15 @@ export default function SearchByFile() {
 
                 {/* 结果展示 */}
                 {loading && (
-                    <p className = "text-center mt-6 text-gray-500">分析中…</p>
+                    <p className = "text-center mt-6 text-gray-500">Analysing…</p>
                 )}
 
                 {!loading && (tags.length > 0 || links.length > 0) && (
-                    <div className = "max-w-4xl mx-auto mt-8 px-4">
+                    <div className = "max-w-3xl mx-auto mt-8 px-4 text-center">
                         {tags.length > 0 && (
                             <div className = "mb-4">
-                                <h2 className = "font-semibold mb-1">检测到的标签：</h2>
-                                <p className = "text-blue-700 flex flex-wrap gap-2">
+                                <h2 className = "font-semibold mb-1">Detected tags:</h2>
+                                <p className = "text-blue-700 flex justify-center flex-wrap gap-2">
                                     {tags.map((t) => (
                                         <span
                                             key = {t}
@@ -90,7 +88,7 @@ export default function SearchByFile() {
 
                         {links.length > 0 && (
                             <div>
-                                <h2 className = "font-semibold mb-1">匹配文件：</h2>
+                                <h2 className = "font-semibold mb-1">Match files:</h2>
                                 {/* 限高滚动容器 */}
                                 <div className = "max-h-80 overflow-auto border rounded p-3 bg-white">
                                     <ul className = "list-disc list-inside space-y-2 text-blue-700">

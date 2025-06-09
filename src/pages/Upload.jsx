@@ -11,7 +11,7 @@ const Upload = () => (
         <Header/>
 
         <main className = "flex-1 bg-gray-50 py-12">
-            <div className = "max-w-xl mx-auto px-4">
+            <div className = "max-w-2xl mx-auto px-4">
                 {/* === 新增返回按钮 === */}
                 <Link
                     to = "/"
@@ -21,11 +21,11 @@ const Upload = () => (
                             transition focus:outline-none focus:ring-2 focus:ring-blue-300"
                 >
                     <ArrowLeftIcon className = "h-5 w-5"/>
-                    返回主页
+                    Back
                 </Link>
 
                 <h1 className = "text-2xl font-bold text-gray-800 mb-6 text-center">
-                    上传文件
+                    Upload file
                 </h1>
 
                 <FileUploader/>

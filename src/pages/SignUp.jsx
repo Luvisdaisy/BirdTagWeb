@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {CognitoUserPool} from 'amazon-cognito-identity-js';
-import {useNavigate, Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import VerifyModal from '../components/VerifyModal';
 import ErrorModal from '../components/ErrorModal';
 
@@ -24,7 +24,7 @@ const SignUp = () => {
         userPool.signUp(email, password, [], null, (err, result) => {
             setIsRegistering(false);
             if (err) {
-                setErrorMessage(err.message || '注册失败，请稍后重试');
+                setErrorMessage(err.message || 'REGISTRATION FAILED PLEASE TRY AGAIN LATER');
             } else {
                 setShowVerifyModal(true);
             }
@@ -35,14 +35,14 @@ const SignUp = () => {
         <div
             className = "min-h-screen bg-gradient-to-tr from-blue-100 to-blue-300 flex items-center justify-center px-4">
             <div className = "bg-white shadow-lg rounded-xl p-8 w-full max-w-md space-y-6">
-                <h2 className = "text-2xl font-bold text-center text-gray-800">注册新账号</h2>
+                <h2 className = "text-2xl font-bold text-center text-gray-800">Register</h2>
                 <form onSubmit = {handleSubmit} className = "space-y-4">
                     <input
                         type = "email"
                         className = "w-full p-3 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                         value = {email}
                         onChange = {(e) => setEmail(e.target.value)}
-                        placeholder = "邮箱"
+                        placeholder = "email"
                         required
                     />
                     <input
@@ -50,7 +50,7 @@ const SignUp = () => {
                         className = "w-full p-3 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                         value = {password}
                         onChange = {(e) => setPassword(e.target.value)}
-                        placeholder = "密码"
+                        placeholder = "password"
                         required
                     />
                     <button
@@ -60,13 +60,13 @@ const SignUp = () => {
                             isRegistering ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
                         } text-white font-semibold py-2 px-4 rounded transition`}
                     >
-                        {isRegistering ? '注册中...' : '注册'}
+                        {isRegistering ? 'Registering...' : 'Registered'}
                     </button>
                 </form>
                 <div className = "text-center text-sm text-gray-600">
-                    已有账号？
+                    Already have an account?
                     <Link to = "/login" className = "ml-1 text-blue-600 hover:underline">
-                        返回登录
+                        Return to login
                     </Link>
                 </div>
             </div>

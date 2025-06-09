@@ -9,7 +9,7 @@ const LogoutButton = () => {
 
     const handle = () => {
         logout();
-        showToast('已退出登录', 'success');
+        showToast('Logged out', 'success');
     };
 
     return (
@@ -19,7 +19,7 @@ const LogoutButton = () => {
                  text-blue-700 hover:bg-blue-100 transition"
         >
             <ArrowLeftOnRectangleIcon className = "h-5 w-5"/>
-            退出
+            QUIT
         </button>
     );
 };

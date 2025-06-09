@@ -1,12 +1,9 @@
-import React, {useState, useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {useToast} from '../contexts/ToastContext';
 import ErrorModal from './ErrorModal';
-import {
-    ArrowUpTrayIcon,
-    XMarkIcon,
-} from '@heroicons/react/24/solid';
+import {ArrowUpTrayIcon, XMarkIcon,} from '@heroicons/react/24/solid';
 
-const DEFAULT_MAX = 20 * 1024 * 1024; // 20 MB
+const DEFAULT_MAX = 20 * 1024 * 1024;
 
 export default function QueryFileUploader({onDone, maxSize = 20, multiple = false}) {
     const MAX_SIZE = maxSize * 1024 * 1024;
@@ -22,7 +19,7 @@ export default function QueryFileUploader({onDone, maxSize = 20, multiple = fals
         const f = e.target.files[0];
         if (!f) return;
         if (f.size > MAX_SIZE) {
-            setError(`文件大小超过 ${maxSize} MB，请重新选择`);
+            setError(`The file size exceeds ${maxSize}MB, please reselect`);
             e.target.value = '';
             return;
         }
@@ -46,12 +43,12 @@ export default function QueryFileUploader({onDone, maxSize = 20, multiple = fals
         const reader = new FileReader();
         reader.onload = () => {
             onDone({base64: reader.result, type: file.type});
-            showToast('文件已上传，正在分析…', 'info');
+            showToast('The file has been uploaded and is being analyzed...', 'info');
             setLoading(false);
             removeFile();
         };
         reader.onerror = () => {
-            setError('读取文件失败');
+            setError('Failed to read the file');
             setLoading(false);
         };
         reader.readAsDataURL(file);
@@ -66,7 +63,7 @@ export default function QueryFileUploader({onDone, maxSize = 20, multiple = fals
                     className = "border-2 border-dashed border-blue-400 rounded-lg p-8 flex flex-col items-center gap-3 text-gray-600 cursor-pointer hover:bg-blue-50 transition"
                 >
                     <ArrowUpTrayIcon className = "h-10 w-10 text-blue-500"/>
-                    <p>点击或拖拽文件到此处（单文件 ≤ {maxSize} MB）</p>
+                    <p>Click or drag the file here (single file ≤ {maxSize} MB)</p>
                     <input
                         ref = {inputRef}
                         type = "file"
@@ -89,10 +86,10 @@ export default function QueryFileUploader({onDone, maxSize = 20, multiple = fals
                     </button>
                     <p className = "text-sm font-medium mb-2 truncate">{file.name}</p>
                     {preview ? (
-                        <img src = {preview} alt = "预览" className = "w-40 h-28 object-cover rounded"/>
+                        <img src = {preview} alt = "Preview" className = "w-40 h-28 object-cover rounded"/>
                     ) : (
                         <p className = "text-xs text-gray-500">
-                            {file.type.startsWith('video') ? '视频文件' : file.type.startsWith('audio') ? '音频文件' : '无法预览'}
+                            {file.type.startsWith('video') ? 'Video files' : file.type.startsWith('audio') ? 'Audio files' : 'Unable to preview'}
                         </p>
                     )}
                 </div>
@@ -105,7 +102,7 @@ export default function QueryFileUploader({onDone, maxSize = 20, multiple = fals
                     disabled = {loading}
                     className = {`mt-4 w-full ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} text-white py-2 rounded-lg transition`}
                 >
-                    {loading ? '处理中…' : '开始分析'}
+                    {loading ? 'PROCESSING…' : 'Start Analysis'}
                 </button>
             )}
 

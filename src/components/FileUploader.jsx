@@ -20,7 +20,7 @@ const FileUploader = () => {
         const newList = [];
         list.forEach((f) => {
             if (f.size > MAX_SIZE) {
-                setError(`文件 ${f.name} 超过 20 MB 限制，已忽略`);
+                setError(`File ${f.name} exceeds the 20 MB limit, ignored`);
             } else {
                 newList.push({file: f, id: crypto.randomUUID()});
             }
@@ -88,11 +88,11 @@ const FileUploader = () => {
                         })),
                 });
             }
-            showToast('所有文件上传成功！', 'success');
+            showToast('All files were uploaded successfully!', 'success');
             setFiles([]);
             setProg({});
         } catch (err) {
-            setError(err.message || '上传失败');
+            setError(err.message || 'Upload failed');
         } finally {
             setUploading(false);
         }
@@ -113,7 +113,7 @@ const FileUploader = () => {
                 onDrop = {handleDrop}
             >
                 <CloudArrowUpIcon className = "h-10 w-10 text-blue-500"/>
-                <p>点击或拖拽文件到此处上传（≤20 MB）</p>
+                <p>Click or drag the file to upload it here (≤20 MB)</p>
                 <input
                     ref = {inputRef}
                     type = "file"
@@ -159,7 +159,7 @@ const FileUploader = () => {
                         : 'bg-blue-600 hover:bg-blue-700'
                 } text-white py-2 rounded-lg transition`}
             >
-                {uploading ? '上传中...' : '开始上传'}
+                {uploading ? 'Uploading...' : 'Upload'}
             </button>
 
             <ErrorModal message = {error} onClose = {() => setError('')}/>

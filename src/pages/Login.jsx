@@ -20,7 +20,7 @@ const Login = () => {
             await login({email, password});
             navigate('/');
         } catch (e) {
-            setErr(e.message || '登录失败');
+            setErr(e.message || 'Login failed');
         } finally {
             setLoading(false);
         }
@@ -29,11 +29,11 @@ const Login = () => {
     return (
         <div className = "min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 to-blue-300">
             <form onSubmit = {handleSubmit} className = "bg-white rounded-xl p-8 w-full max-w-md space-y-4 shadow">
-                <h2 className = "text-xl font-bold text-center mb-4">登录</h2>
+                <h2 className = "text-xl font-bold text-center mb-4">LOG IN</h2>
 
                 <input
                     type = "email"
-                    placeholder = "邮箱"
+                    placeholder = "mail"
                     value = {email}
                     onChange = {(e) => setEmail(e.target.value)}
                     required
@@ -41,7 +41,7 @@ const Login = () => {
                 />
                 <input
                     type = "password"
-                    placeholder = "密码"
+                    placeholder = "password"
                     value = {password}
                     onChange = {(e) => setPwd(e.target.value)}
                     required
@@ -55,11 +55,11 @@ const Login = () => {
                       ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
                 >
                     <MagnifyingGlassIcon className = "h-5 w-5"/>
-                    {loading ? '登录中…' : '登录'}
+                    {loading ? 'Login…' : 'LogIn'}
                 </button>
 
                 <p className = "text-sm text-center">
-                    还没有帐号？<Link to = "/signup" className = "text-blue-600 hover:underline">去注册</Link>
+                    Don't have an account yet?<Link to = "/signup" className = "text-blue-600 hover:underline">REGISTER</Link>
                 </p>
 
                 <ErrorModal message = {err} onClose = {() => setErr('')}/>

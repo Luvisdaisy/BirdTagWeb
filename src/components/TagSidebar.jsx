@@ -1,7 +1,5 @@
-/* src/components/TagSidebar.jsx */
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
-import {ArrowLeftIcon, XMarkIcon} from '@heroicons/react/24/solid';
+import {XMarkIcon} from '@heroicons/react/24/solid';
 
 const TagSidebar = ({tags = [], selected = [], toggle}) => {
     const [filter, setFilter] = useState('');

@@ -23,9 +23,9 @@ const VerifyModal = ({email, isOpen, onClose, onVerified}) => {
         user.confirmRegistration(code, true, (err, result) => {
             setIsVerifying(false);
             if (err) {
-                setErrorMessage(err.message || '验证码验证失败');
+                setErrorMessage(err.message || 'Verification code verification failed');
             } else {
-                showToast('验证成功！');
+                showToast('Verification was successful!');
                 onVerified();
             }
         });
@@ -37,13 +37,14 @@ const VerifyModal = ({email, isOpen, onClose, onVerified}) => {
         <>
             <div className = "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className = "bg-white p-6 rounded shadow max-w-sm w-full">
-                    <h2 className = "text-xl font-bold mb-4">邮箱验证</h2>
-                    <p className = "mb-2 text-sm text-gray-700">验证码已发送至：<strong>{email}</strong></p>
+                    <h2 className = "text-xl font-bold mb-4">Email Verification</h2>
+                    <p className = "mb-2 text-sm text-gray-700">The verification code has been sent
+                                                                to:<strong>{email}</strong></p>
                     <form onSubmit = {handleConfirm} className = "space-y-4">
                         <input
                             type = "text"
                             className = "w-full p-2 border"
-                            placeholder = "请输入6位验证码"
+                            placeholder = "Please enter a 6-digit verification code"
                             value = {code}
                             onChange = {(e) => setCode(e.target.value)}
                             required
@@ -63,7 +64,7 @@ const VerifyModal = ({email, isOpen, onClose, onVerified}) => {
                                     isVerifying ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 text-white'
                                 } rounded`}
                             >
-                                {isVerifying ? '验证中...' : '验证'}
+                                {isVerifying ? 'Verifying...' : 'Verification'}
                             </button>
                         </div>
                     </form>

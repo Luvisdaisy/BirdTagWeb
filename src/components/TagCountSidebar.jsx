@@ -1,6 +1,4 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
-import {ArrowLeftIcon} from '@heroicons/react/24/solid';
 
 /* 左侧 30 % 宽，带搜索框，标签 4 列网格 */
 const TagCountSidebar = ({allTags, selected, toggle}) => {
@@ -18,7 +16,7 @@ const TagCountSidebar = ({allTags, selected, toggle}) => {
             <input
                 value = {filter}
                 onChange = {(e) => setFilter(e.target.value)}
-                placeholder = "搜索标签"
+                placeholder = "Search Tags"
                 className = "mb-4 w-full px-3 py-2 text-sm rounded-lg border focus:ring-2 focus:ring-blue-300"
             />
 
@@ -42,7 +40,7 @@ const TagCountSidebar = ({allTags, selected, toggle}) => {
                     );
                 })}
                 {shown.length === 0 && (
-                    <p className = "text-xs text-gray-500">无匹配标签</p>
+                    <p className = "text-xs text-gray-500">No matching tags</p>
                 )}
             </div>
         </aside>
