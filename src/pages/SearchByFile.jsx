@@ -56,7 +56,7 @@ export default function SearchByFile() {
                     </Link>
 
                     <h1 className = "text-2xl font-bold text-center mb-6">
-                        Upload files • Search the same tags with pictures/sounds
+                        Upload files • Search the same tags with medias
                     </h1>
 
                     {/* 上传：单文件 ≤20 MB，可拖拽 */}
