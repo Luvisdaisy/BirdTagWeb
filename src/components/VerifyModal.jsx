@@ -55,7 +55,7 @@ const VerifyModal = ({email, isOpen, onClose, onVerified}) => {
                                 onClick = {onClose}
                                 className = "px-4 py-2 bg-gray-300 rounded"
                             >
-                                取消
+                                Cancel
                             </button>
                             <button
                                 type = "submit"
