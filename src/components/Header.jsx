@@ -12,7 +12,7 @@ export default function Header() {
                 <div className = "max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                     {/* 左侧 Logo / 首页链接 */}
                     <Link to = "/" className = "text-xl font-semibold text-blue-700">
-                        Bird Media Portal
+                        Bird Tag
                     </Link>
 
                     {/* 右侧按钮区域 */}
